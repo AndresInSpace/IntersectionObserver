@@ -208,15 +208,25 @@ IntersectionObserver.prototype.takeRecords = function() {
  * @return {Array} A sorted list of unique and valid threshold values.
  */
 IntersectionObserver.prototype._initThresholds = function(opt_threshold) {
-  var threshold = opt_threshold || [0];
-  if (!Array.isArray(threshold)) threshold = [threshold];
-
-  return threshold.sort().filter(function(t, i, a) {
-    if (typeof t != 'number' || isNaN(t) || t < 0 || t > 1) {
-      throw new Error('threshold must be a number between 0 and 1 inclusively');
+    var threshold = opt_threshold || [0];
+    if (!Array.isArray(threshold)) threshold = [threshold];
+    var a = threshold.sort();
+    var i = 0;
+    var j = 0;
+    for(i=0;i<threshold.length;i++){
+        var t = a[i];
+        if(function(t, i, a) {
+            if (typeof t != 'number' || isNaN(t) || t < 0 || t > 1) {
+                throw new Error('threshold must be a number between 0 and 1 inclusively');
+            }
+            return t !== a[i - 1];
+        }) {
+            a[j++] = t;
+        }
     }
-    return t !== a[i - 1];
-  });
+
+    a.length = j;
+    return a;
 };
 
 
